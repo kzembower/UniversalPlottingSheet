@@ -1,0 +1,216 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{pdftexcmds,etoolbox}
+
+%% From web page at https://tex.stackexchange.com/questions/175991/how-can-i-draw-nomograms-in-latex downloaded on 2 Apr 2020.
+
+\makeatletter
+\newif\ifroundedenabled%
+\newif\ifscalemaxtomin%
+\newif\ifscalefromzero%
+\pgfkeys{/nomogram/.cd,
+  % keys for a single diagram
+  part 1/.style={},
+  part 2/.style={},
+  part 3/.style={},
+  single diagram/.cd,
+  scale max to min/.is if=scalemaxtomin,
+  scale max to min=false,
+  scale from zero/.is if=scalefromzero,
+  scale from zero=true,
+  at pos/.store in=\dgrposition,
+  at pos={(0,0)},
+  height/.store in=\dgrheight,
+  height=10cm,
+  min value/.store in=\minval,
+  min value=0,
+  max value/.store in=\maxval,
+  max value=10,
+  step/.store in=\incstep,
+  step=1,
+  horizontal rule width/.store in=\horulewidth,
+  horizontal rule width=1cm,
+  min step/.store in=\minstep,
+  min step={\incstep/2},
+  minor tick rule width/.store in=\minortickrulewidth,
+  minor tick rule width=3mm,
+  little tick rule width/.store in=\litteltickrulewidth,
+  little tick rule width=1mm,
+  tick direction/.store in=\tickpos,
+  tick direction=left,
+  label above/.store in=\lababove,
+  label above={},
+  label sloped/.store in=\labsloped,
+  label sloped={},
+  label above rotation/.store in=\rotation,
+  label above rotation=0,
+  diagram/.code={
+    \path \dgrposition node(A){};
+    \pgfgetlastxy{\xA}{\yA};
+    \ifscalemaxtomin%
+      \pgfmathsetmacro\sndval{\maxval-\incstep}
+      \foreach \y[count=\yi from 0] in {\maxval,\sndval,...,\minval}{
+        \global\let\maxitems\yi%
+      }%
+    \else%
+      \pgfmathsetmacro\sndval{\minval+\incstep}
+      \foreach \y[count=\yi from 0] in {\minval,\sndval,...,\maxval}{
+        \global\let\maxitems\yi%
+      }%
+    \fi  
+    \draw(\xA,\yA)--++(0,\dgrheight)
+     node[pos=0.5,sloped,above]{\labsloped}
+     node[above,rotate=\rotation,transform shape]{\lababove};% vertical line+above label
+    \pgfmathsetmacro\actualstep{\dgrheight/\maxitems}%
+        % little ticks
+        \pgfmathsetmacro\littletickstep{\actualstep/10}
+    \foreach \y in {0,\littletickstep,...,\dgrheight}{
+     \ifnum\pdf@strcmp{\tickpos}{left}=\z@%
+       \draw(\xA,\yA+\y pt) --++(-\litteltickrulewidth,0);
+     \fi%
+     \ifnum\pdf@strcmp{\tickpos}{right}=\z@%
+        \draw(\xA,\yA+\y pt) --++(\litteltickrulewidth,0);
+     \fi%
+    }%
+    % min step
+    \pgfmathsetmacro\mintickstep{\actualstep/2}
+    \ifscalemaxtomin%
+      \foreach \y [count=\yi from 0,
+             evaluate=\yi as \ytext using ((\maxval-\yi*\incstep+\yi*\incstep/2))]
+              in {0,\mintickstep,...,\dgrheight}{%
+        \ifnumodd{\yi}{% true
+        \ifnum\pdf@strcmp{\tickpos}{left}=\z@%  
+          \draw (\xA,\yA+\y pt) --++(-\minortickrulewidth,0) 
+            node[left,font=\footnotesize]{\pgfmathprintnumber{\ytext}};
+        \fi%
+        \ifnum\pdf@strcmp{\tickpos}{right}=\z@%
+          \draw (\xA,\yA+\y pt) --++(\minortickrulewidth,0) 
+            node[right,font=\footnotesize]{\pgfmathprintnumber{\ytext}};
+        \fi%
+        }{}%
+      }%
+    \else%
+      \foreach \y [count=\yi from 0,
+         evaluate=\yi as \ytext using ((\yi*\incstep+2*\minval)/2)] in 
+         {0,\mintickstep,...,\dgrheight}{%
+        \ifnumodd{\yi}{% true
+          \ifnum\pdf@strcmp{\tickpos}{left}=\z@%  
+            \draw (\xA,\yA+\y pt) --++(-\minortickrulewidth,0) 
+              node[left,font=\footnotesize]{\pgfmathprintnumber{\ytext}};
+          \fi%
+         \ifnum\pdf@strcmp{\tickpos}{right}=\z@%
+            \draw (\xA,\yA+\y pt) --++(\minortickrulewidth,0) 
+              node[right,font=\footnotesize]{\pgfmathprintnumber{\ytext}};
+         \fi%
+        }{}%
+      }%
+    \fi%  
+    % main step
+    \ifscalemaxtomin%
+      \ifscalefromzero%
+          \foreach \y[count=\yi from 0,
+              evaluate=\yi as \ytext using (\maxval-\yi*\incstep)] in 
+              {0,\actualstep,...,\dgrheight}{%
+            \ifnum\pdf@strcmp{\tickpos}{left}=\z@%  
+              \pgfkeys{/pgf/number format/.cd,fixed,precision=2}
+              \draw (\xA,\yA+\y pt) --++(-\horulewidth,0) 
+                node[left]{\pgfmathprintnumber{\ytext}};
+            \fi%
+            \ifnum\pdf@strcmp{\tickpos}{right}=\z@%
+              \pgfkeys{/pgf/number format/.cd,fixed,precision=2}
+              \draw (\xA,\yA+\y pt) --++(\horulewidth,0) 
+                node[right]{\pgfmathprintnumber{\ytext}};
+            \fi%
+              }%
+      \else%
+          \foreach \y[count=\yi from 0,
+              evaluate=\yi as \ytext using (\maxval-\yi*\incstep)] in 
+              {0,\actualstep,...,\dgrheight}{%
+            \ifnum\pdf@strcmp{\tickpos}{left}=\z@%  
+              \pgfkeys{/pgf/number format/.cd,fixed,precision=2}
+              \draw (\xA,\yA+\y pt) --++(-\horulewidth,0) 
+                node[left]{\pgfmathprintnumber{\ytext}};
+            \fi%
+            \ifnum\pdf@strcmp{\tickpos}{right}=\z@%
+              \pgfkeys{/pgf/number format/.cd,fixed,precision=2}
+              \draw (\xA,\yA+\y pt) --++(\horulewidth,0) 
+                node[right]{\pgfmathprintnumber{\ytext}};
+            \fi%
+              }%
+          \fi%
+    \else%
+      \ifscalefromzero%
+          \foreach \y[count=\yi from 0,
+              evaluate=\yi as \ytext using (\yi*\sndval+\minval)] in 
+              {0,\actualstep,...,\dgrheight}{%
+            \ifnum\pdf@strcmp{\tickpos}{left}=\z@%  
+              \pgfkeys{/pgf/number format/.cd,fixed,precision=2}
+              \draw (\xA,\yA+\y pt) --++(-\horulewidth,0) 
+                node[left]{\pgfmathprintnumber{\ytext}};
+            \fi%
+            \ifnum\pdf@strcmp{\tickpos}{right}=\z@%
+              \pgfkeys{/pgf/number format/.cd,fixed,precision=2}
+              \draw (\xA,\yA+\y pt) --++(\horulewidth,0) 
+                node[right]{\pgfmathprintnumber{\ytext}};
+            \fi%        
+              }%
+      \else%
+          \foreach \y[count=\yi from 0,
+              evaluate=\yi as \ytext using (\yi*\incstep+\minval)] in 
+              {0,\actualstep,...,\dgrheight}{%
+            \ifnum\pdf@strcmp{\tickpos}{left}=\z@%  
+              \pgfkeys{/pgf/number format/.cd,fixed,precision=2}
+              \draw (\xA,\yA+\y pt) --++(-\horulewidth,0) 
+                node[left]{\pgfmathprintnumber{\ytext}};
+            \fi%
+            \ifnum\pdf@strcmp{\tickpos}{right}=\z@%
+              \pgfkeys{/pgf/number format/.cd,fixed,precision=2}
+              \draw (\xA,\yA+\y pt) --++(\horulewidth,0) 
+                node[right]{\pgfmathprintnumber{\ytext}};
+            \fi%        
+              }%
+          \fi%
+    \fi%
+  }%
+}
+
+% that's just an alias for \node
+\def\drawnomogrampart{\tikz@path@overlay{node}}
+\makeatother
+
+\begin{document}
+
+\begin{tikzpicture}
+\drawnomogrampart[/nomogram/single diagram/.cd,
+height=7cm,
+min value=50,
+max value=130,
+step=10,
+label above=$\Delta v$,
+scale from zero=false,
+diagram]{};
+\begin{scope}[rotate=-30,transform shape]
+\drawnomogrampart[/nomogram/single diagram/.cd,
+horizontal rule width=0.5cm,
+height=8cm,
+min value=0,
+max value=0.901,% for rounding purposes
+step=0.1,
+label above rotation=30,
+label above={$M_f=1-\textrm{e}^{-\Delta v/9.81*I_{sp}}$},
+label sloped={Mass Fraction $(M_f)$},
+tick direction=right,
+diagram]{};
+\end{scope}
+\drawnomogrampart[/nomogram/single diagram/.cd,
+scale from zero=false,
+height=7cm,
+scale max to min=true,
+min value=400,
+max value=2000,
+step=200,
+at pos={(7,0)},
+tick direction=right,
+label above=IPS (s),
+diagram]{};
+\end{tikzpicture}
+\end{document}
