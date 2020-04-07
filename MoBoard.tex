@@ -4,8 +4,9 @@
 % A simple compass
 % Author: Dario Orescanin
 %% From website: http://www.texample.net/tikz/examples/degree-wheel/ downloaded on 2 Apr 2020.
+\documentclass[tikz,border=10pt]{standalone}
 
-\documentclass{minimal}
+%\documentclass{minimal}
 \usepackage{tikz}
 %\usetikzlibrary{calc}
 
@@ -15,25 +16,18 @@
 
 % Define a few constants for easy configuration
   \def\radius{8.5cm}            %Scale everything off of the radius
-\def\onedegrad{\radius*0.975}
-\def\fivedegrad{\radius*0.95}
-\def\tendegrad{\radius*0.925}
-\def\labelrad{\radius*0.90}
+  \def\onedegrad{\radius*0.975}
+  \def\fivedegrad{\radius*0.95}
+  \def\tendegrad{\radius*0.925}
+  \def\labelrad{\radius*0.90}
 
-\begin{tikzpicture}[scale=1]
-
-  % adding a subtle gray tone to add a bit of "personality"
-  %\shade[shading=radial, inner color=white, outer color=gray!15] (0,0) circle (\radius);
-
-  \draw (0,0) circle (\radius);
-  %\draw[fill=red] (0,0) circle (.02mm); %Centerpoint; not needed
-  %\node[draw, circle, inner sep=.2mm] (a) at (0,0) {};
-
-  % helper lines; Not needed
-  %\foreach \x in {0, 45, ..., 360} \draw[very thin, gray!40] (a) -- (\x:\radius);
+\begin{tikzpicture}[scale=1,
+    degree lines/.style={color=gray, very thin}]
+  
+  \draw (0,0) circle (\radius); %Outer circle
 
   % main lines
-  \foreach \x in {0,...,359} \draw (\x:\onedegrad) -- (\x:\radius);
+  \foreach \x in {0,...,359} \draw [degree lines] (\x:\onedegrad) -- (\x:\radius);
 
   % labels and longer lines at every 10 degrees
   \foreach \x in {0,10,...,350}
@@ -43,8 +37,14 @@
   };
 
   % lines at every 5 degrees
-  \foreach \x in {0,5,...,355}  \draw (\x:\fivedegrad) -- (\x:\radius);
+  \foreach \x in {0,5,...,355}  \draw [degree lines] (\x:\fivedegrad) -- (\x:\radius);
 
+  %% Draw the latitude lines
+  \foreach \y in {-\radius*2,-\radius*1,0,\radius*1,\radius*2}
+  \draw (-\radius*1.5,\y) -- (\radius*1.5,\y);
+  %% Then, two above
+
+  
 \end{tikzpicture}
 \end{centering}
 
