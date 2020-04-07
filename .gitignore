@@ -1,0 +1,5 @@
+# .gitignore for the MoBoard directory
+*~
+*\.pdf
+*\.log
+*\.aux
