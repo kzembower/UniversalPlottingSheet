@@ -1,12 +1,7 @@
 %% First attempt at 'manually' drawing a Manouvering Board, using LaTeX and tikz
 %% Author: Kevin Zembower
 
-% A simple compass
-% Author: Dario Orescanin
-%% From website: http://www.texample.net/tikz/examples/degree-wheel/ downloaded on 2 Apr 2020.
 \documentclass[tikz,border=10pt]{standalone}
-
-%\documentclass{minimal}
 \usepackage{tikz}
 %\usetikzlibrary{calc}
 
@@ -21,66 +16,63 @@
   \def\tendegrad{\radius*0.925}
   \def\labelrad{\radius*0.90}
 
-\begin{tikzpicture}[scale=1,
-    degree lines/.style={color=gray, very thin}]
-  
-  \draw (0,0) circle (\radius); %Outer circle
+  \begin{tikzpicture}[scale=1,
+      degree lines/.style={color=gray, very thin}]
+    
+    \draw (0,0) circle (\radius); %Outer circle
+    
+    % lines at every degree
+    \foreach \x in {0,...,359} \draw [degree lines] (\x:\onedegrad) -- (\x:\radius);
 
-  % lines at every degree
-  \foreach \x in {0,...,359} \draw [degree lines] (\x:\onedegrad) -- (\x:\radius);
-
-  % lines at every 5 degrees
-  \foreach \x in {0,5,...,355}  \draw [degree lines] (\x:\fivedegrad) -- (\x:\radius);
-
-  % labels and longer lines at every 10 degrees
-  \foreach \x in {0,10,...,350}
-  {
-    \node[scale=1, rotate=\x*-1] at (360-\x+90:\labelrad) {\x};
-    \draw (\x:\tendegrad) -- (\x:\radius);
-  };
-
-  %% Draw the latitude lines
-  \foreach \y in {-\radius*2,-\radius*1,0,\radius*1,\radius*2}
-  \draw (-\radius*1.5,\y) -- (\radius*1.5,\y);
-
-  %% Draw the center vertical line, and scale
-  \draw (0, -\radius*2) -- (0, \radius*2);
-  \foreach \x in {-2,-1,...,1}
-           {
-             %% Draw the one degree lines
-             \foreach \tick in {1,2,...,59} %Don't draw on top of existing lines
-                      {
-                        \draw [degree lines] (0, {\radius*\x+(\tick*\radius/60)}) --
-                        (\radius-\onedegrad, {\radius*\x+(\tick*\radius/60)});
-                      }
-             %% Draw the 5 degree lines
-             \foreach \tick in {5,10,...,55}
-                      {
-                        \draw [degree lines] (0, {\radius*\x+(\tick*\radius/60)}) --
-                        (\radius-\fivedegrad, {\radius*\x+(\tick*\radius/60)});
-                      }
-             %% Draw the 10 degree lines and numbers
-             \foreach \tick in {10,20,...,50}
-                      {
-                        \draw [degree lines] (0, {\radius*\x+(\tick*\radius/60)}) --
-                        (\radius-\tendegrad, {\radius*\x+(\tick*\radius/60)});
-                        \node [scale=1] at (\radius-\labelrad,
-                              {\radius*\x+(\tick*\radius/60)}) {\tick}; 
-                      }
-           }
+    % lines at every 5 degrees
+    \foreach \x in {0,5,...,355}  \draw [degree lines] (\x:\fivedegrad) -- (\x:\radius);
+    
+    % labels and longer lines at every 10 degrees
+    \foreach \x in {0,10,...,350} {
+      \node[scale=1, rotate=\x*-1] at (360-\x+90:\labelrad) {\x};
+      \draw (\x:\tendegrad) -- (\x:\radius);
+    };
+    
+    %% Draw the latitude lines
+    \foreach \y in {-\radius*2,-\radius*1,0,\radius*1,\radius*2} {
+      \draw (-\radius*1.5,\y) -- (\radius*1.5,\y);
+    }
+    
+    %% Draw the center vertical line, and scale
+    \draw (0, -\radius*2) -- (0, \radius*2);
+    \foreach \x in {-2,-1,...,1} {
+      %% Draw the one degree lines
+      \foreach \tick in {1,2,...,59} { %Don't draw on top of existing lines
+        \draw [degree lines] (0, {\radius*\x+(\tick*\radius/60)}) --
+        (\radius-\onedegrad, {\radius*\x+(\tick*\radius/60)});
+      }
+      %% Draw the 5 degree lines
+      \foreach \tick in {5,10,...,55} {
+        \draw [degree lines] (0, {\radius*\x+(\tick*\radius/60)}) --
+        (\radius-\fivedegrad, {\radius*\x+(\tick*\radius/60)});
+      }
+      %% Draw the 10 degree lines and numbers
+      \foreach \tick in {10,20,...,50} {
+        \draw [degree lines] (0, {\radius*\x+(\tick*\radius/60)}) --
+        (\radius-\tendegrad, {\radius*\x+(\tick*\radius/60)});
+        \node [scale=1] at (\radius-\labelrad,
+              {\radius*\x+(\tick*\radius/60)}) {\tick}; 
+      }
+    }
            
-           %% Draw the latitude scale in the bottom right-hand corner
-           \def\latzeroy{\radius*-2}; %Set a new reference point, for 0,0.
-           \def\latzerox{\radius*1.25};
-           \def\lath{\radius*0.75}; %Height of latitude scale
-           \def\latw{\radius*0.75}; %Width of lattitude scale
-           \draw (\latzerox, \latzeroy) -- (\latzerox, \latzeroy+\lath);
-           %% Draw the horizontal lines
-           \foreach \y in {0,10,...,70} {
-             \draw (\latzerox, {\latzeroy+\lath*\y/70}) --
-             (\latzerox-5, {\latzeroy+\lath*\y/70});
-           }
-           %% \draw (\latzerox-\latw, \latzeroy) cos(\latzerox
+    %% Draw the latitude scale in the bottom right-hand corner
+    \def\latzeroy{\radius*-2}; %Set a new reference point, for 0,0.
+    \def\latzerox{\radius*1.25};
+    \def\latw{\radius}; %Width of lattitude scale. MUST BE equal to \radius
+    \def\lath{\radius*0.75}; %Height of latitude scale
+    \draw (\latzerox, \latzeroy) -- (\latzerox, \latzeroy+\lath);
+    %% Draw the horizontal lines
+    \foreach \y in {0,10,...,70} {
+      \draw (\latzerox, {\latzeroy+\lath*\y/70}) --
+      (\latzerox-5, {\latzeroy+\lath*\y/70});
+    }
+    %% \draw (\latzerox-\latw, \latzeroy) cos(\latzerox
+    
 \end{tikzpicture}
 \end{centering}
 
