@@ -4,7 +4,8 @@
 
 \begin{document}
 
-\begin{tikzpicture}[domain=0:60, scale=0.2]
+\begin{tikzpicture}[scale=0.2]
+  \draw[blue,very thin] (0,0) grid (2,2);
   \foreach \y in {1,...,70} {   %for each degree in the vertical scale
     \foreach \step in {0,2,...,10,20,30,40,50,60} { %for each of the curved lines
       \draw[thick] ({sin(90-\y)*-\step+60},\y) -- ({sin(90-\y+1)*-\step+60},\y-1);
