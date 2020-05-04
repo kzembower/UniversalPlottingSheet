@@ -61,11 +61,34 @@
     }
            
     %% Draw the latitude scale in the bottom right-hand corner
-    \def\latzeroy{\radius*-2}; %Set a new reference point, for 0,0.
-    \def\latzerox{\radius*1.25};
-    \def\latw{\radius}; %Width of lattitude scale. MUST BE equal to \radius
-    \def\lath{\latw*0.75}; %Height of latitude scale, arbitrary
-    \node at ++(\latzerox, \latzeroy) {0,0};
+    %% Inserted from test2.tex:
+    \def\zeroy{\radius*-2}; %Set a new reference point, for 0,0.
+    \def\zerox{\radius*1.25};
+    \def\scalex{\radius}; %Width of lattitude scale. MUST BE equal to \radius
+    \def\scaley{\scalex*0.75}; %Height of latitude scale, arbitrary
+
+    \foreach \step in {0.00,0.02,0.04,0.06,0.08,0.1,0.2,0.3,0.4,0.5,0.6} { %for each of the curved lines
+      \foreach \y in {0.0,0.01,...,0.69} {   %for each degree in the vertical scale
+        \draw[thick]  ({((-sin(90-\y*100))*\step*\scalex)+\zerox},{(\y*\scaley)+\zeroy}) --
+        ({((-sin(90-(\y+0.01)*100))*\step*\scalex)+\zerox},{((\y+0.01)*\scaley)+\zeroy});
+      }
+    }
+    \foreach \lat in {0, 10,...,70} {  %For each of the horizontal latitude lines
+      \draw[thick] ({(-sin(90-\lat)*.6*\scalex)+\zerox},{(\lat/100*\scaley)+\zeroy}) --
+      (\zerox, {(\lat/100*\scaley)+\zeroy}) node [right] {\lat};
+    }
+    
+    \foreach \lat in {5,15,...,65} {  %For each of the thinner horizontal latitude lines
+      \draw[very thin] ({(-sin(90-\lat)*.6*\scalex)+\zerox}, {(\lat/100*\scaley)+\zeroy}) --
+      (\zerox,{(\lat/100*\scaley)+\zeroy});
+    }
+    \foreach \min in {0,10,...,50} {     %For each minute in the latitude scale
+      \node [above left] at ({((-\min/10)*(\scalex/10))-(\scalex/10)+\zerox}, \zeroy) {\min};
+    }
+    %% END of insert
+
+
+
     %% \draw (\latzerox, \latzeroy) -- (\latzerox, \latzeroy+\lath);
     %% Draw the horizontal lines
     %% \foreach \y in {0,10,...,70} {
