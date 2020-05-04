@@ -74,15 +74,20 @@
     %% }
     %% \draw (\latzerox-\latw, \latzeroy) cos(\latzerox
 
-    %% Paste in text2.tex, the working version of the latitude scale
-    \foreach \lat in {1,...,70} {   %for each degree in the vertical scale
-      \foreach \step in {0,2,...,10,20,30,40,50,60} { %for each of the curved lines
-        \draw[thick] ({(sin(90-\lat)*-\step)*(\latw/60)},{\lat/70*\lath}) --
-        ({(sin(90-\lat+1)*-\step)*(\latw/60)},{(\lat-1)/70*\lath});
-      }
-    }
+    %% Create the latitude scale, in the bottom right corner
+    %% \foreach \lat in {1,...,70} {   %for each degree in the vertical scale
+    %%   \foreach \step in {0,2,...,10,20,30,40,50,60} { %for each of the curved lines
+    %%     \draw[thick] ({(sin(90-\lat)*-\step)*(\latw/60)+\latzerox},{(\lat/70*\lath)+\latzeroy}) --
+    %%     ({(sin(90-\lat+1)*-\step)*(\latw/60)+\latzerox},{((\lat-1)/70*\lath)+\latzeroy});
+    %%   }
+    %% }
     %% \foreach \lat in {0,10,...,70} {  %For each of the horizontal latitude lines
-    %%   \draw[thick] ({sin(90-\lat)*-60+60},\lat) -- (60,\lat) node [right] {\lat};
+    %%   \draw[blue, thick] ({(1-(sin(90-\lat)))*(\latw)+\latzerox},{\lat/70*\lath+\latzeroy}) --
+    %%   (\latzerox,{\lat/70*\lath+\latzeroy}) node [right] {\lat};
+    %% }
+    %% \foreach \lat in {0,10,...,70} {  %For each of the horizontal latitude lines
+    %%   \draw[blue, thick] ({((sin(90-\lat)*-60+60)/60)+\latzerox},{\lat/70*\lath+\latzeroy}) --
+    %%   (\latzerox,{\lat/70*\lath+\latzeroy}) node [right] {\lat};
     %% }
     %% \foreach \lat in {5,15,...,65} {  %For each of the thinner horizontal latitude lines
     %%   \draw[ very thin] (60,\lat) -- ({sin(90-\lat)*-60+60},\lat);
