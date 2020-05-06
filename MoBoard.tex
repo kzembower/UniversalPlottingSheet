@@ -1,16 +1,17 @@
-%% First attempt at 'manually' drawing a Universal Plotting Sheet, using LaTeX and tikz
+%% First attempt at 'manually' drawing a Universal Plotting Sheet,
+%% using LaTeX and tikz
 %% Author: Kevin Zembower
 
-\documentclass[tikz,border=10pt]{standalone}
+\documentclass[tikz,border=1cm]{standalone}
 \usepackage{tikz}
-%\usetikzlibrary{calc}
+\tikzset{font={\fontsize{8pt}{12}\selectfont}}
 
 \begin{document}
 
 \begin{centering}
 
 % Define a few constants for easy configuration
-  \def\radius{8.5cm}            %Scale everything off of the radius
+  \def\radius{6.5cm}            %Scale everything off of the radius
   \def\onedegrad{\radius*0.975}
   \def\fivedegrad{\radius*0.95}
   \def\tendegrad{\radius*0.925}
@@ -61,64 +62,32 @@
     }
            
     %% Draw the latitude scale in the bottom right-hand corner
-    %% Inserted from test2.tex:
     \def\zeroy{\radius*-2}; %Set a new reference point, for 0,0.
     \def\zerox{\radius*1.25};
-    \def\scalex{\radius}; %Width of lattitude scale. MUST BE equal to \radius
+    \def\scalex{\radius/0.60}; % Width of lattitude scale. MUST BE
+                               % equal to \radius. Divide by 0.60,
+                               % because latitude scale is only 60
+                               % degree wide.
     \def\scaley{\scalex*0.75}; %Height of latitude scale, arbitrary
 
     \foreach \step in {0.00,0.02,0.04,0.06,0.08,0.1,0.2,0.3,0.4,0.5,0.6} { %for each of the curved lines
       \foreach \y in {0.0,0.01,...,0.69} {   %for each degree in the vertical scale
-        \draw[thick]  ({((-sin(90-\y*100))*\step*\scalex)+\zerox},{(\y*\scaley)+\zeroy}) --
+        \draw ({((-sin(90-\y*100))*\step*\scalex)+\zerox},{(\y*\scaley)+\zeroy}) --
         ({((-sin(90-(\y+0.01)*100))*\step*\scalex)+\zerox},{((\y+0.01)*\scaley)+\zeroy});
       }
     }
     \foreach \lat in {0, 10,...,70} {  %For each of the horizontal latitude lines
-      \draw[thick] ({(-sin(90-\lat)*.6*\scalex)+\zerox},{(\lat/100*\scaley)+\zeroy}) --
+      \draw ({(-sin(90-\lat)*.6*\scalex)+\zerox},{(\lat/100*\scaley)+\zeroy}) --
       (\zerox, {(\lat/100*\scaley)+\zeroy}) node [right] {\lat};
     }
     
     \foreach \lat in {5,15,...,65} {  %For each of the thinner horizontal latitude lines
-      \draw[very thin] ({(-sin(90-\lat)*.6*\scalex)+\zerox}, {(\lat/100*\scaley)+\zeroy}) --
+      \draw[very thin, gray] ({(-sin(90-\lat)*.6*\scalex)+\zerox}, {(\lat/100*\scaley)+\zeroy}) --
       (\zerox,{(\lat/100*\scaley)+\zeroy});
     }
     \foreach \min in {0,10,...,50} {     %For each minute in the latitude scale
       \node [above left] at ({((-\min/10)*(\scalex/10))-(\scalex/10)+\zerox}, \zeroy) {\min};
     }
-    %% END of insert
-
-
-
-    %% \draw (\latzerox, \latzeroy) -- (\latzerox, \latzeroy+\lath);
-    %% Draw the horizontal lines
-    %% \foreach \y in {0,10,...,70} {
-    %%   \draw (\latzerox, {\latzeroy+\lath*\y/70}) --
-    %%   (\latzerox-5, {\latzeroy+\lath*\y/70});
-    %% }
-    %% \draw (\latzerox-\latw, \latzeroy) cos(\latzerox
-
-    %% Create the latitude scale, in the bottom right corner
-    %% \foreach \lat in {1,...,70} {   %for each degree in the vertical scale
-    %%   \foreach \step in {0,2,...,10,20,30,40,50,60} { %for each of the curved lines
-    %%     \draw[thick] ({(sin(90-\lat)*-\step)*(\latw/60)+\latzerox},{(\lat/70*\lath)+\latzeroy}) --
-    %%     ({(sin(90-\lat+1)*-\step)*(\latw/60)+\latzerox},{((\lat-1)/70*\lath)+\latzeroy});
-    %%   }
-    %% }
-    %% \foreach \lat in {0,10,...,70} {  %For each of the horizontal latitude lines
-    %%   \draw[blue, thick] ({(1-(sin(90-\lat)))*(\latw)+\latzerox},{\lat/70*\lath+\latzeroy}) --
-    %%   (\latzerox,{\lat/70*\lath+\latzeroy}) node [right] {\lat};
-    %% }
-    %% \foreach \lat in {0,10,...,70} {  %For each of the horizontal latitude lines
-    %%   \draw[blue, thick] ({((sin(90-\lat)*-60+60)/60)+\latzerox},{\lat/70*\lath+\latzeroy}) --
-    %%   (\latzerox,{\lat/70*\lath+\latzeroy}) node [right] {\lat};
-    %% }
-    %% \foreach \lat in {5,15,...,65} {  %For each of the thinner horizontal latitude lines
-    %%   \draw[ very thin] (60,\lat) -- ({sin(90-\lat)*-60+60},\lat);
-    %% }
-    %% \foreach \min in {0,10,...,50} {     %For each minute in the latitude scale (skip 0)
-    %%   \node [above left] at (50-\min, 0) {\min};
-    %% }
-
     
 \end{tikzpicture}
 \end{centering}
