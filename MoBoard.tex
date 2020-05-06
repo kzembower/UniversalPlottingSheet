@@ -12,10 +12,11 @@
 
 % Define a few constants for easy configuration
   \def\radius{6.5cm}            %Scale everything off of the radius
-  \def\onedegrad{\radius*0.975}
-  \def\fivedegrad{\radius*0.95}
-  \def\tendegrad{\radius*0.925}
-  \def\labelrad{\radius*0.90}
+  \def\onedegrad{\radius*0.975} %Distance in from radius circle to end of one-degree line
+  \def\fivedegrad{\radius*0.95} %Distance in from radius circle to end of 5-degree line
+  \def\tendegrad{\radius*0.925} %Distance in from radius circle to end of 10-degree line
+  \def\labelrad{\radius*0.90}   %Distance in from radius circle to 10-degree label text
+  \def\outerlabelrad{\radius*1.0375} %Distance to outer degree label text
 
   \begin{tikzpicture}[scale=1,
       degree lines/.style={color=gray, very thin}]
@@ -30,9 +31,15 @@
     
     % labels and longer lines at every 10 degrees
     \foreach \x in {0,10,...,350} {
-      \node[scale=1, rotate=\x*-1] at (360-\x+90:\labelrad) {\x};
+      \node[scale=1, rotate=-\x] at (360-\x+90:\labelrad) {\x};
       \draw (\x:\tendegrad) -- (\x:\radius);
     };
+
+    %% Draw the outer text labels, from 10-70 degrees, CW and CCX from 90 degrees:
+    \foreach \x in {10,20,...,70} {
+      \node[scale=0.75, rotate=\x] at (\x:\outerlabelrad) {\x};
+      \node[scale=0.75, rotate=-\x] at (-\x:\outerlabelrad) {\x};
+    }
     
     %% Draw the latitude lines
     \foreach \y in {-\radius*2,-\radius*1,0,\radius*1,\radius*2} {
@@ -88,6 +95,10 @@
     \foreach \min in {0,10,...,50} {     %For each minute in the latitude scale
       \node [above left] at ({((-\min/10)*(\scalex/10))-(\scalex/10)+\zerox}, \zeroy) {\min};
     }
+
+    %% Enter the label for where to find this file
+    \node [anchor=south west] at (-\radius*1.5,-\radius*2)
+          {\LaTeX{} and TikZ Universal Plotting Sheet v0.1};
     
 \end{tikzpicture}
 \end{centering}
